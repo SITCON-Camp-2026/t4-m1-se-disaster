@@ -29,34 +29,31 @@ Do not change these without asking the course designer.
 - Mock data: CC0.
 - Repository and demo are expected to be public.
 
-## GitHub organization and repositories
+## Repository strategy
 
-Organization:
-
-```text
-sitcon-camp-2026
-```
-
-Expected repositories:
+Starter repository:
 
 ```text
-se-disaster-starter
-se-disaster-team-01
-se-disaster-team-02
-se-disaster-team-03
-se-disaster-team-04
-se-disaster-team-05
-se-disaster-team-06
-se-disaster-team-07
-se-disaster-team-08
-se-disaster-team-09
-se-disaster-staff
-se-disaster-showcase
+sitcon-tw/camp2026-se-disaster-starter
 ```
 
-The team repositories are expected to be fork-based, preferably created through GitHub Classroom group assignment. This starter repository should not contain hidden team-specific data.
+Team repositories are created under:
 
-`se-disaster-staff` is private and is responsible for timed releases such as family briefs, event injection, hidden fixtures, and handoff challenges.
+```text
+SITCON-Camp-2026
+```
+
+The repository creation and fork/template workflow has already been tested by the organizers in other course repositories. Coding agents should not redesign that strategy.
+
+This starter repository must not contain:
+
+- team-specific briefs
+- hidden event data
+- mentor guides
+- expected answers
+- the full source PDF report
+
+Timed materials such as family briefs, event injection, hidden fixtures, and handoff challenges belong in a private staff repository and should be released to team repositories at the correct time.
 
 ## Course flow
 
@@ -64,38 +61,24 @@ The team repositories are expected to be fork-based, preferably created through 
 
 Day schedule:
 
-| Time        | Phase                 | Purpose                                                              |
-| ----------- | --------------------- | -------------------------------------------------------------------- |
-| 09:00-09:20 | Opening               | Context, constraints, safety boundary                                |
-| 09:20-10:10 | Shared messy sprint   | All teams face the same messy data first                             |
-| 10:10-10:30 | Debrief               | Students surface confusion about roles, states, source quality       |
-| 10:30-10:50 | Case reveal           | Introduce real-world tradeoffs from disaster collaboration platforms |
-| 10:50-11:10 | Split into task lines | Information intake / credibility / action                            |
-| 11:10-12:00 | SDD-lite + schema     | Write spec, I/O contract, and data contract                          |
-| 13:00-13:30 | Spec market           | Teams challenge each other's assumptions                             |
-| 13:30-13:50 | Scope lock            | Lock main flow and data contract                                     |
-| 13:50-15:20 | Build Sprint 1        | Build the main front-end flow                                        |
-| 15:35-16:20 | Event injection       | Timed PR introduces dirty incoming data and schema mismatch          |
-| 16:20-17:20 | Build Sprint 2        | Absorb change, add adapter/test/docs                                 |
-| 18:20-18:40 | Handoff prep          | Prepare README/data contract/handoff notes                           |
-| 18:40-19:25 | Handoff challenge     | Another team attempts to understand and modify the project           |
-| 20:00-21:00 | Showcase              | Non-ranking engineering feedback                                     |
+| Time | Phase | Purpose |
+|---|---|---|
+| 09:00-09:20 | Opening | Context, constraints, safety boundary |
+| 09:20-10:10 | Shared messy sprint | All teams face the same messy data first |
+| 10:10-10:30 | Debrief | Students surface confusion about roles, states, source quality |
+| 10:30-10:50 | Case reveal | Introduce real-world tradeoffs from disaster collaboration platforms |
+| 10:50-11:10 | Split into task lines | Information intake / credibility / action |
+| 11:10-12:00 | SDD-lite + schema | Write spec, I/O contract, and data contract |
+| 13:00-13:30 | Spec market | Teams challenge each other's assumptions |
+| 13:30-13:50 | Scope lock | Lock main flow and data contract |
+| 13:50-15:20 | Build Sprint 1 | Build the main front-end flow |
+| 15:35-16:20 | Event injection | Timed PR introduces dirty incoming data and schema mismatch |
+| 16:20-17:20 | Build Sprint 2 | Absorb change, add adapter/test/docs |
+| 18:20-18:40 | Handoff prep | Prepare README/data contract/handoff notes |
+| 18:40-19:25 | Handoff challenge | Another team attempts to understand and modify the project |
+| 20:00-21:00 | Showcase | Non-ranking engineering feedback |
 
-## Team assignment
-
-| Team | Size | Line | Student-facing task              |
-| ---- | ---: | ---- | -------------------------------- |
-| 1    |    6 | A    | 找出重複、錯誤與需要確認的資訊   |
-| 2    |    5 | A    | 讓求助資訊能被送出               |
-| 3    |    5 | A    | 幫不方便操作的人代為整理需求     |
-| 4    |    5 | B    | 幫志工判斷哪裡可能還可用         |
-| 5    |    6 | B    | 讓不確定資訊不要被誤當成事實     |
-| 6    |    5 | B    | 讓現場的人回報「實際狀況變了」   |
-| 7    |    5 | C    | 讓志工安全地選擇能做的任務       |
-| 8    |    5 | C    | 幫協調者把任務分給合適的人       |
-| 9    |    6 | C    | 讓自由協作與統一調度不要互相打架 |
-
-The starter repo should not reveal these team-specific briefs at the beginning. Those should come from the staff repo at the correct time.
+Team-specific task briefs are released later by staff and should not be preloaded into this starter repository.
 
 ## Task lines
 
@@ -203,6 +186,7 @@ Good uses of AI coding agents:
 - Write adapters for event input.
 - Check missing empty/error/uncertain states.
 - Improve README and handoff notes.
+- Update `docs/ai-log.md` when AI assistance affects requirements, schema, code, tests, event handling, or handoff.
 
 Disallowed decisions for AI agents:
 
@@ -221,6 +205,15 @@ Before asking a coding agent to implement a feature, provide:
 4. Constraints.
 5. Files that may be modified.
 
+## Task navigation layer
+
+The starter must guide students through each phase of the day.
+
+- Generic phase task cards live in `docs/tasks/`.
+- Copyable coding-agent prompts live in `docs/prompts/`.
+- Team-specific brief and hidden event data do not live in the starter.
+- Active classroom tasks may also be delivered through GitHub Issues generated from the templates in `.github/ISSUE_TEMPLATE/`.
+
 ## Acceptance for starter repo
 
 The starter repo is acceptable when:
@@ -233,7 +226,9 @@ The starter repo is acceptable when:
 - It has shared normalized data.
 - It has at least one adapter example.
 - It has minimal UI for records, source, status, and update time.
+- It has task cards and prompt templates for each course phase.
 - It has docs templates.
+- It has `docs/ai-log.md` so teams can record AI-assisted work and human judgment.
 - It has AGENTS, SAFETY, DATA_SOURCES, README, TEAM.
 - It has GitHub Actions CI and Pages workflow.
 - It contains no hidden event data.
