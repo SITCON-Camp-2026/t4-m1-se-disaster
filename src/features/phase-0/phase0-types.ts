@@ -25,6 +25,26 @@ export type Phase0MessyRecord = {
   updatedAt: string;
 };
 
+export type Phase0RawCategory =
+  | "help"
+  | "supplies"
+  | "site_status"
+  | "access_notice"
+  | "coordination"
+  | "needs_triage";
+
+export type Phase0InformationStatus =
+  | "unverified"
+  | "needs_review"
+  | "conflicting"
+  | "time_sensitive"
+  | "secondhand"
+  | "action_limited";
+
+export type Phase0InformationCompleteness = "low" | "medium" | "high";
+
+export type Phase0Difficulty = "hard" | "medium" | "easy";
+
 export type Phase0JudgementDraft = {
   messyRecordId: string;
   possibleKind: Phase0PossibleKind;
@@ -34,4 +54,10 @@ export type Phase0JudgementDraft = {
   suggestedNextStep: Phase0SuggestedNextStep;
   unsafeToActDirectly: boolean;
   humanReviewNote?: string;
+};
+
+export type Phase0EditableDraft = Phase0JudgementDraft & {
+  draftTitle: string;
+  humanCorrection: string;
+  needsHumanReview: boolean;
 };

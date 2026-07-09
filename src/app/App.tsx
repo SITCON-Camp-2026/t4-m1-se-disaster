@@ -13,14 +13,26 @@ const tabs: Array<{ key: TabKey; label: string }> = [
 ];
 
 const phase0Records = messyReports satisfies Phase0MessyRecord[];
+const initialWorkbenchRecordIds = phase0Records
+  .slice(0, 6)
+  .map((record) => record.id);
 
 export function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("raw");
   const [selectedRecordId, setSelectedRecordId] = useState(
     phase0Records[0]?.id ?? "",
   );
+  const [workbenchRecordIds, setWorkbenchRecordIds] = useState<string[]>(
+    initialWorkbenchRecordIds,
+  );
+  const workbenchRecords = phase0Records.filter((record) =>
+    workbenchRecordIds.includes(record.id),
+  );
 
   function selectForWorkbench(recordId: string) {
+    setWorkbenchRecordIds((currentIds) =>
+      currentIds.includes(recordId) ? currentIds : [...currentIds, recordId],
+    );
     setSelectedRecordId(recordId);
     setActiveTab("workbench");
   }
@@ -56,11 +68,12 @@ export function App() {
           <Phase0RawInfoPanel
             records={phase0Records}
             selectedRecordId={selectedRecordId}
+            workbenchRecordIds={workbenchRecordIds}
             onSelect={selectForWorkbench}
           />
         ) : (
           <Phase0Workbench
-            records={phase0Records}
+            records={workbenchRecords}
             selectedRecordId={selectedRecordId}
             onSelect={setSelectedRecordId}
           />

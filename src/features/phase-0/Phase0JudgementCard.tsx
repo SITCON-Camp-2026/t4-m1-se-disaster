@@ -1,5 +1,9 @@
 import { StatusBadge } from "../../components/StatusBadge";
-import type { Phase0JudgementDraft, Phase0MessyRecord } from "./phase0-types";
+import type {
+  Phase0EditableDraft,
+  Phase0JudgementDraft,
+  Phase0MessyRecord,
+} from "./phase0-types";
 
 const kindLabels: Record<Phase0JudgementDraft["possibleKind"], string> = {
   help_request_candidate: "求助候選",
@@ -31,23 +35,33 @@ const nextStepLabels: Record<
 export function Phase0JudgementCard({
   judgement,
   record,
+  hasDraft,
 }: {
-  judgement: Phase0JudgementDraft;
+  judgement: Phase0JudgementDraft | Phase0EditableDraft;
   record: Phase0MessyRecord;
+  hasDraft: boolean;
 }) {
+  const editableDraft = "needsHumanReview" in judgement ? judgement : undefined;
+
   return (
     <article className="judgement-card">
       <div className="judgement-card__header">
         <div>
-          <p className="eyebrow">Starter 安全預設</p>
-          <h3>尚未建立整理草稿</h3>
+          <p className="eyebrow">
+            {hasDraft ? "整理草稿摘要" : "Starter 安全預設"}
+          </p>
+          <h3>
+            {editableDraft?.draftTitle ||
+              (hasDraft ? "未命名草稿" : "尚未建立整理草稿")}
+          </h3>
         </div>
         <StatusBadge status={record.verificationStatus} />
       </div>
 
       <p>
-        這張卡只保留保守的安全邊界，不是 agent 對這筆資料的整理答案。請讓 coding
-        agent 實作可建立、編輯與刪除的整理草稿。
+        {hasDraft
+          ? "這是目前畫面中的可編輯草稿，仍需要人類檢查，不是整理後資料。"
+          : "這張卡只保留保守的安全邊界，不是 agent 對這筆資料的整理答案。"}
       </p>
 
       <dl className="judgement-summary">
@@ -72,6 +86,15 @@ export function Phase0JudgementCard({
         </strong>
       </p>
 
+      {editableDraft ? (
+        <p>
+          人工確認：
+          <strong>
+            {editableDraft.needsHumanReview ? "需要人工確認" : "暫未標示"}
+          </strong>
+        </p>
+      ) : null}
+
       <section>
         <h4>目前只有安全預設</h4>
         <ul>
@@ -89,6 +112,20 @@ export function Phase0JudgementCard({
           ))}
         </ul>
       </section>
+
+      {editableDraft?.humanCorrection ? (
+        <section>
+          <h4>人工質疑或修正</h4>
+          <p>{editableDraft.humanCorrection}</p>
+        </section>
+      ) : null}
+
+      {editableDraft?.humanReviewNote ? (
+        <section>
+          <h4>需要確認</h4>
+          <p>{editableDraft.humanReviewNote}</p>
+        </section>
+      ) : null}
     </article>
   );
 }
