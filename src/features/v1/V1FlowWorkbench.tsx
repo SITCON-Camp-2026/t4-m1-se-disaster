@@ -20,6 +20,11 @@ type V1ReviewRecord = {
   nextCheck: string;
 };
 
+type V1AcceptedTask = {
+  recordId: string;
+  acceptedAt: string;
+};
+
 type V1FlowAnalysis = {
   record: Phase0MessyRecord;
   categoryLabel: string;
@@ -46,6 +51,12 @@ const dispositionNotes: Record<V1Disposition, string> = {
   pending_draft: "保留線索與疑點，交給下一位協作者人工確認。",
   hold: "目前不適合使用，但保留不採用理由，避免資料消失。",
   candidate: "只能作為待確認候選結果，不代表已確認或可以行動。",
+};
+
+const dispositionPlainNotes: Record<V1Disposition, string> = {
+  pending_draft: "還不能判斷，只能先整理原文和疑點。",
+  hold: "目前不要拿來使用，但要留下原因。",
+  candidate: "可以作為下一步整理方向，但仍不是已確認任務。",
 };
 
 const queueFilters: Array<{ key: V1QueueFilter; label: string }> = [
@@ -178,6 +189,7 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
   );
   const [reviews, setReviews] = useState(() => createInitialReviews(records));
   const [queueFilter, setQueueFilter] = useState<V1QueueFilter>("all");
+  const [acceptedTasks, setAcceptedTasks] = useState<V1AcceptedTask[]>([]);
   const selectedAnalysis =
     analyses.find((analysis) => analysis.record.id === selectedRecordId) ??
     analyses[0];
@@ -192,6 +204,17 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
   const candidateCount = Object.values(reviews).filter(
     (review) => review.disposition === "candidate",
   ).length;
+  const acceptedTaskCount = acceptedTasks.length;
+  const acceptedTaskRecords = acceptedTasks
+    .map((task) => {
+      const analysis = analyses.find(
+        (candidate) => candidate.record.id === task.recordId,
+      );
+      return analysis ? { ...task, analysis } : null;
+    })
+    .filter((task): task is V1AcceptedTask & { analysis: V1FlowAnalysis } =>
+      Boolean(task),
+    );
   const filteredAnalyses = analyses.filter((analysis) => {
     const review = reviews[analysis.record.id];
 
@@ -221,6 +244,21 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
 
   function resetReviews() {
     setReviews(createInitialReviews(records));
+    setAcceptedTasks([]);
+  }
+
+  function toggleAcceptedTask(recordId: string) {
+    setAcceptedTasks((currentTasks) =>
+      currentTasks.some((task) => task.recordId === recordId)
+        ? currentTasks.filter((task) => task.recordId !== recordId)
+        : [
+            ...currentTasks,
+            {
+              recordId,
+              acceptedAt: new Date().toISOString(),
+            },
+          ],
+    );
   }
 
   return (
@@ -228,7 +266,7 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
       <section className="v1-banner">
         <div>
           <p className="eyebrow">v1 flow prototype</p>
-          <h2>資訊整理者流程工作台</h2>
+          <h2>待確認資訊工作台</h2>
           <p>
             這個畫面只使用 Phase 0
             原始資訊。候選整理結果仍是待確認輸出，不代表已確認，也不代表可以行動。
@@ -250,6 +288,10 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
           <span>
             <strong>{candidateCount}</strong>
             待確認候選
+          </span>
+          <span>
+            <strong>{acceptedTaskCount}</strong>
+            已接取任務
           </span>
         </div>
       </section>
@@ -305,10 +347,25 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
         </aside>
 
         <section className="v1-main" aria-label="v1 流程檢查">
+          <section className="v1-safety-summary">
+            <div>
+              <p className="eyebrow">目前狀態</p>
+              <h3>這裡沒有任何已確認任務</h3>
+              <p>
+                所有內容都來自 Phase 0
+                原始資訊；使用者只能整理、標記疑點與留下確認紀錄，不能直接出發、派工或發布成事實。
+              </p>
+              <p className="v1-order-note">
+                已接取任務：{acceptedTaskCount}{" "}
+                筆。這裡的任務只代表接手確認與整理，不代表現場行動。
+              </p>
+            </div>
+          </section>
+
           <article className="v1-record">
             <div className="v1-record__header">
               <div>
-                <p className="eyebrow">Phase 0 原始資訊</p>
+                <p className="eyebrow">原始資訊</p>
                 <h3>{selectedAnalysis.record.id}</h3>
               </div>
               <StatusBadge
@@ -326,7 +383,7 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
 
           <section className="v1-flow-steps">
             <div className="v1-section-heading">
-              <p className="eyebrow">flow.md 實作</p>
+              <p className="eyebrow">整理流程</p>
               <h3>從原始資訊到下一位協作者檢查</h3>
             </div>
             {flowSteps.map((step, index) => (
@@ -395,6 +452,21 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
                 <strong>{selectedReview.humanJudgement}</strong>
                 <p>{selectedReview.nextCheck}</p>
               </article>
+            </div>
+          </section>
+
+          <section className="v1-state-guide">
+            <div className="v1-section-heading">
+              <p className="eyebrow">狀態說明</p>
+              <h3>這些狀態不等於可以行動</h3>
+            </div>
+            <div className="v1-state-guide__grid">
+              {Object.entries(dispositionPlainNotes).map(([key, note]) => (
+                <article key={key}>
+                  <strong>{dispositionLabels[key as V1Disposition]}</strong>
+                  <p>{note}</p>
+                </article>
+              ))}
             </div>
           </section>
         </section>
@@ -481,6 +553,18 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
             />
           </label>
 
+          <button
+            className="v1-accept-task"
+            type="button"
+            onClick={() => toggleAcceptedTask(selectedAnalysis.record.id)}
+          >
+            {acceptedTasks.some(
+              (task) => task.recordId === selectedAnalysis.record.id,
+            )
+              ? "取消接取確認任務"
+              : "接取確認任務"}
+          </button>
+
           <section className="v1-output">
             <h4>目前輸出</h4>
             <dl>
@@ -497,6 +581,35 @@ export function V1FlowWorkbench({ records }: { records: Phase0MessyRecord[] }) {
                 <dd>不能直接變成任務</dd>
               </div>
             </dl>
+          </section>
+
+          <section className="v1-accepted-tasks">
+            <div className="v1-section-heading">
+              <h4>已接取任務</h4>
+              <span>{acceptedTaskCount} 筆</span>
+            </div>
+            {acceptedTaskRecords.length > 0 ? (
+              <div>
+                {acceptedTaskRecords.map((task) => {
+                  const review = reviews[task.recordId];
+                  return (
+                    <button
+                      key={task.recordId}
+                      type="button"
+                      onClick={() => setSelectedRecordId(task.recordId)}
+                    >
+                      <strong>{task.recordId}</strong>
+                      <span>{review.reviewOwner}</span>
+                      <small>接取：{formatDateTime(task.acceptedAt)}</small>
+                      <small>{review.nextCheck}</small>
+                      <em>確認與整理，不是現場行動</em>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <p>目前尚未接取任何確認任務。</p>
+            )}
           </section>
 
           <section className="v1-review-list">

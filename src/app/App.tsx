@@ -51,8 +51,7 @@ export function App() {
         <h1>{isV1Route ? "v1 資訊流程工作台" : "災害資訊整理工作台"}</h1>
         {isV1Route ? (
           <p>
-            根據 `docs/flow.md`
-            實作資訊整理者流程：先看原文與查核狀態，再檢查脈絡、風險與人工判斷紀錄。
+            先看原文與查核狀態，再檢查脈絡、風險與人工判斷紀錄；這裡不是派工系統。
           </p>
         ) : (
           <p>
@@ -68,7 +67,7 @@ export function App() {
             aria-current={isV1Route ? "page" : undefined}
             href={`${basePath}v1/`}
           >
-            行動者工作台
+            確認工作台
           </a>
         </div>
       </header>

@@ -34,7 +34,7 @@ describe("App", () => {
       screen.queryByRole("button", { name: "人員指派" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "行動者工作台" }),
+      screen.getByRole("link", { name: "確認工作台" }),
     ).toBeInTheDocument();
   });
 
@@ -44,8 +44,13 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByText("v1 資訊流程工作台")).toBeInTheDocument();
-    expect(screen.getByText("資訊整理者流程工作台")).toBeInTheDocument();
-    expect(screen.getByText("flow.md 實作")).toBeInTheDocument();
+    expect(screen.getByText("待確認資訊工作台")).toBeInTheDocument();
+    expect(screen.getByText("這裡沒有任何已確認任務")).toBeInTheDocument();
+    expect(screen.getAllByText("已接取任務").length).toBeGreaterThan(0);
+    expect(screen.getByText(/不代表現場行動/)).toBeInTheDocument();
+    expect(screen.getByText("目前尚未接取任何確認任務。")).toBeInTheDocument();
+    expect(screen.getByText("整理流程")).toBeInTheDocument();
+    expect(screen.getByText("狀態說明")).toBeInTheDocument();
     expect(screen.getByText("人工判斷紀錄")).toBeInTheDocument();
     expect(screen.getByText("AI 推測與人工判斷分開")).toBeInTheDocument();
     expect(screen.getByText("判斷紀錄清單")).toBeInTheDocument();
@@ -54,6 +59,12 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getAllByText("仍需人工確認").length).toBeGreaterThan(0);
     expect(screen.getAllByText("不能直接變成任務").length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("button", { name: "接取確認任務" }));
+    expect(
+      screen.getByRole("button", { name: "取消接取確認任務" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/確認與整理，不是現場行動/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "候選" }));
 

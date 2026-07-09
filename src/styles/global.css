@@ -303,16 +303,21 @@ textarea {
 
 .queue-filter {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(5rem, 1fr));
   gap: 6px;
   margin-bottom: 8px;
 }
 
 .workbench__queue .queue-filter button {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
   padding: 7px 8px;
   text-align: center;
   font-size: 0.86rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .workbench__queue button {
@@ -436,18 +441,25 @@ textarea {
 }
 
 .signal-grid div {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.25rem, 1fr));
   gap: 6px;
 }
 
 .signal-grid span {
-  border-radius: 999px;
-  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border-radius: 8px;
+  padding: 6px 10px;
   background: #eef6ff;
   color: #245d9d;
   font-size: 0.82rem;
   font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .review-questions ul {
@@ -890,15 +902,21 @@ textarea {
 
 .v1-filter {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(5rem, 1fr));
   gap: 6px;
   margin-bottom: 2px;
 }
 
 .v1-filter button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
   padding: 7px 8px;
   text-align: center;
   font-size: 0.86rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .v1-filter button.active {
@@ -948,6 +966,37 @@ textarea {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+}
+
+.v1-safety-summary,
+.v1-state-guide {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #f3d587;
+  border-left: 4px solid #b7791f;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff8df;
+}
+
+.v1-safety-summary h3,
+.v1-safety-summary p,
+.v1-state-guide h3 {
+  margin: 0;
+}
+
+.v1-safety-summary p:last-child {
+  color: #5f4b20;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.v1-order-note {
+  width: fit-content;
+  border: 1px solid rgb(176 128 42 / 46%);
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: rgb(255 250 235 / 74%);
 }
 
 .v1-record h3,
@@ -1078,6 +1127,26 @@ textarea {
   line-height: 1.45;
 }
 
+.v1-state-guide__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.v1-state-guide__grid article {
+  display: grid;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.v1-state-guide__grid p {
+  margin: 0;
+  color: #5f6b7a;
+  line-height: 1.45;
+}
+
 .v1-review label {
   display: grid;
   gap: 6px;
@@ -1124,11 +1193,26 @@ textarea {
   font-weight: 800;
 }
 
+.v1-accept-task {
+  border: 1px solid #cfd8e3;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.v1-accepted-tasks,
 .v1-review-list {
   display: grid;
   gap: 8px;
   border-top: 1px solid #dbe4ef;
   padding-top: 10px;
+}
+
+.v1-accepted-tasks p {
+  margin: 0;
+  color: #5f6b7a;
+  line-height: 1.5;
 }
 
 .v1-review-list button {
@@ -1137,6 +1221,33 @@ textarea {
   padding: 7px 9px;
   background: #ffffff;
   cursor: pointer;
+}
+
+.v1-accepted-tasks > div:last-child {
+  display: grid;
+  gap: 6px;
+}
+
+.v1-accepted-tasks > div:last-child button {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #cfd8e3;
+  border-radius: 8px;
+  padding: 7px 9px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.v1-accepted-tasks em {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: #fff3cd;
+  color: #8a5a00;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 0.78rem;
 }
 
 .v1-review-list > div {
@@ -1264,8 +1375,234 @@ textarea {
   .v1-banner__metrics,
   .v1-evidence-grid,
   .v1-compare__grid,
-  .v1-diagram__split,
-  .v1-diagram__merge {
+  .v1-state-guide__grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Qing dynasty retro skin: paper, cinnabar, ink blue, jade, and aged gold. */
+:root {
+  color: #241a12;
+  background:
+    radial-gradient(
+      circle at 16% 18%,
+      rgb(255 255 255 / 42%) 0 7%,
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 84% 9%,
+      rgb(185 150 82 / 18%) 0 7%,
+      transparent 20%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(91 54 31 / 5%) 0 1px,
+      transparent 1px 18px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgb(91 54 31 / 4%) 0 1px,
+      transparent 1px 22px
+    ),
+    linear-gradient(135deg, #f7ecd4 0%, #efe0be 48%, #e8d5aa 100%);
+}
+
+body {
+  background-attachment: fixed;
+}
+
+.hero,
+.panel,
+.record-card,
+.raw-category,
+.info-classification div,
+.workbench__intro,
+.workbench__queue,
+.workbench__checklist,
+.judgement-card,
+.analysis-card,
+.draft-editor,
+.fit-check,
+.v1-banner,
+.v1-queue button,
+.v1-record,
+.v1-flow-steps,
+.v1-compare,
+.v1-evidence-grid article,
+.v1-review,
+.v1-safety-summary,
+.v1-state-guide {
+  border: 1px solid rgb(102 65 27 / 42%);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgb(255 250 235 / 94%), rgb(242 226 190 / 88%)),
+    repeating-linear-gradient(
+      135deg,
+      rgb(102 65 27 / 4%) 0 2px,
+      transparent 2px 9px
+    );
+  box-shadow:
+    0 18px 36px rgb(58 38 18 / 14%),
+    inset 0 1px 0 rgb(255 255 255 / 70%);
+}
+
+.hero {
+  border-top: 8px solid #8f1d16;
+}
+
+.hero::before {
+  content: "未核實卷宗 · 不可作為行動令";
+  margin: -20px -20px 16px;
+  border-bottom: 1px solid rgb(102 65 27 / 34%);
+  background:
+    linear-gradient(90deg, #8f1d16, #b33326 48%, #1f4f46),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 16%) 0 2px,
+      transparent 2px 8px
+    );
+  color: #fff7e5;
+  letter-spacing: 0.18em;
+}
+
+.hero h1 {
+  color: #2d2116;
+  font-family: Georgia, "Times New Roman", serif;
+  text-shadow: 0 2px 0 rgb(255 247 229 / 80%);
+}
+
+.eyebrow {
+  color: #8f1d16;
+}
+
+button,
+.hero__actions a {
+  box-shadow: 0 4px 10px rgb(58 38 18 / 12%);
+}
+
+button:hover,
+.hero__actions a:hover {
+  box-shadow: 0 7px 16px rgb(58 38 18 / 16%);
+}
+
+button:active,
+.hero__actions a:active {
+  box-shadow: 0 2px 6px rgb(58 38 18 / 13%);
+}
+
+.hero__actions a,
+.tabs button,
+.record-card button,
+.workbench__queue button,
+.workbench__checklist button,
+.draft-editor button,
+.v1-filter button,
+.v1-accept-task,
+.v1-accepted-tasks button,
+.v1-review-list button {
+  border: 1px solid rgb(102 65 27 / 46%);
+  background: linear-gradient(180deg, #fff7e5, #e7c98e);
+  color: #2d2116;
+}
+
+.hero__actions a[aria-current="page"],
+.tabs button.active,
+.workbench__queue button.active,
+.v1-filter button.active,
+.v1-queue button.active {
+  border-color: #3d2a16;
+  background: linear-gradient(180deg, #234f46, #163a35);
+  color: #fff7e5;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid rgb(102 65 27 / 46%);
+  background: #fffaf0;
+  box-shadow: inset 0 1px 4px rgb(58 38 18 / 10%);
+}
+
+.record-card--hard {
+  border-color: rgb(143 29 22 / 42%);
+  background: linear-gradient(180deg, #fff1e9, #edd0bd);
+}
+
+.record-card--medium,
+.v1-safety-summary,
+.v1-state-guide,
+.v1-warning {
+  border-color: rgb(176 128 42 / 46%);
+  background: linear-gradient(180deg, #fff8df, #ead39b);
+}
+
+.record-card--easy {
+  border-color: rgb(31 79 70 / 42%);
+  background: linear-gradient(180deg, #eef8ed, #d2e3c8);
+}
+
+.analysis-card__header > strong,
+.fit-check__score strong,
+.v1-flow-steps b,
+.allocation-list b {
+  background: linear-gradient(180deg, #8f1d16, #64140f);
+  color: #fff7e5;
+  box-shadow: 0 4px 10px rgb(143 29 22 / 22%);
+}
+
+.status-badge,
+.source-label,
+.queue-item__flags span,
+.signal-grid span,
+.v1-evidence-grid span,
+.v1-queue em,
+.allocation-list em,
+.fit-check__score span {
+  border: 1px solid rgb(102 65 27 / 34%);
+}
+
+.status-needs_review,
+.status-unverified,
+.status-unknown,
+.v1-queue em,
+.allocation-list em {
+  background: #ead39b;
+  color: #4b3212;
+}
+
+.status-verified,
+.status-verified_open,
+.status-confirmed,
+.status-completed,
+.status-fulfilled {
+  background: #d2e3c8;
+  color: #1f4f46;
+}
+
+.status-rejected,
+.status-cancelled,
+.status-verified_closed {
+  background: #edd0bd;
+  color: #6d1711;
+}
+
+.source-label,
+.signal-grid span,
+.v1-evidence-grid span,
+.fit-check__score span {
+  background: #d9e3d0;
+  color: #1f4f46;
+}
+
+.metric-grid div,
+.analysis-grid div,
+.judgement-summary div,
+.action-boundary div,
+.judgement-boundary div,
+.v1-banner__metrics span,
+.v1-compare__grid article,
+.v1-state-guide__grid article,
+.v1-output div {
+  border: 1px solid rgb(102 65 27 / 28%);
+  background: rgb(255 250 235 / 74%);
 }
