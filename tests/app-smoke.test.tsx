@@ -1,8 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { App } from "../src/app/App";
 
 describe("App", () => {
+  beforeEach(() => {
+    window.history.pushState({}, "", "/");
+  });
+
   it("renders starter title", () => {
     render(<App />);
     expect(screen.getByText("災害資訊整理工作台")).toBeInTheDocument();
@@ -29,6 +33,37 @@ describe("App", () => {
     expect(
       screen.queryByRole("button", { name: "人員指派" }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "行動者工作台" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the v1 flow workbench from /v1/", () => {
+    window.history.pushState({}, "", "/v1/");
+
+    render(<App />);
+
+    expect(screen.getByText("v1 資訊流程工作台")).toBeInTheDocument();
+    expect(screen.getByText("資訊整理者流程工作台")).toBeInTheDocument();
+    expect(screen.getByText("flow.md 實作")).toBeInTheDocument();
+    expect(screen.getByText("人工判斷紀錄")).toBeInTheDocument();
+    expect(screen.getByText("AI 推測與人工判斷分開")).toBeInTheDocument();
+    expect(screen.getByText("判斷紀錄清單")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "暫不採用" }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText("仍需人工確認").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("不能直接變成任務").length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("button", { name: "候選" }));
+
+    expect(screen.getAllByText("M-010").length).toBeGreaterThan(0);
+
+    fireEvent.change(screen.getByLabelText("人工處理結果"), {
+      target: { value: "candidate" },
+    });
+
+    expect(screen.getByText(/候選整理結果仍需人工確認/)).toBeInTheDocument();
   });
 
   it("shows lightweight categories on raw records", () => {
