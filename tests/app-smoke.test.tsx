@@ -107,7 +107,7 @@ describe("App", () => {
 
     expect(screen.getByText("判斷儀表")).toBeInTheDocument();
     expect(screen.getByText("草稿")).toBeInTheDocument();
-    expect(screen.getByText("確認我能做什麼")).toBeInTheDocument();
+    expect(screen.getByText("先確認適配度，再整理草稿")).toBeInTheDocument();
     expect(screen.getByLabelText("我現在可以做什麼")).toBeInTheDocument();
     expect(screen.getByLabelText("我現在不能做什麼")).toBeInTheDocument();
     expect(screen.getByLabelText("交給誰確認")).toBeInTheDocument();

@@ -343,6 +343,7 @@ export function Phase0Workbench({
     record: selectedRecord,
     draft: selectedDraft,
   });
+  const selectedFit = selectedDraft ? calculateFit(selectedDraft) : null;
   const filteredRecords = records.filter((record) => {
     const draft = drafts[record.id];
 
@@ -553,7 +554,11 @@ export function Phase0Workbench({
             <div className="draft-editor__header">
               <div>
                 <p className="eyebrow">可編輯整理草稿</p>
-                <h3>{selectedDraft ? "確認我能做什麼" : "這筆尚未建立草稿"}</h3>
+                <h3>
+                  {selectedDraft
+                    ? "先確認適配度，再整理草稿"
+                    : "這筆尚未建立草稿"}
+                </h3>
               </div>
               <div className="draft-editor__actions">
                 <button
@@ -574,31 +579,16 @@ export function Phase0Workbench({
 
             {selectedDraft ? (
               <>
-                <section className="action-boundary">
-                  <div>
-                    <span>現在可以做</span>
-                    <strong>{selectedDraft.allowedAction}</strong>
-                  </div>
-                  <div>
-                    <span>現在不能做</span>
-                    <strong>{selectedDraft.disallowedAction}</strong>
-                  </div>
-                  <div>
-                    <span>需要確認者</span>
-                    <strong>{selectedDraft.confirmationOwner}</strong>
-                  </div>
-                </section>
-
                 <section className="fit-check">
                   <div className="fit-check__header">
                     <div>
                       <h4>我和這筆整理任務的適配度</h4>
-                      <p>{calculateFit(selectedDraft).note}</p>
+                      <p>{selectedFit?.note}</p>
                     </div>
-                    <strong>{calculateFit(selectedDraft).percentage}%</strong>
-                  </div>
-                  <div className="fit-check__result">
-                    {calculateFit(selectedDraft).label}
+                    <div className="fit-check__score">
+                      <strong>{selectedFit?.percentage}%</strong>
+                      <span>{selectedFit?.label}</span>
+                    </div>
                   </div>
                   <div className="fit-question-grid">
                     <label>
@@ -676,115 +666,148 @@ export function Phase0Workbench({
                   </div>
                 </section>
 
-                <label>
-                  草稿標題
-                  <input
-                    placeholder="例如：先記錄原文中的候選需求，不補地址"
-                    value={selectedDraft.draftTitle}
-                    onChange={(event) =>
-                      updateSelectedDraft({ draftTitle: event.target.value })
-                    }
-                  />
-                </label>
+                <section className="draft-section">
+                  <div className="draft-section__header">
+                    <h4>行動邊界</h4>
+                    <p>
+                      先寫清楚現在能做與不能做的事，避免把草稿當成正式任務。
+                    </p>
+                  </div>
 
-                <div className="draft-editor__grid">
-                  <label>
-                    候選類型
-                    <select
-                      value={selectedDraft.possibleKind}
-                      onChange={(event) =>
-                        updateSelectedDraft({
-                          possibleKind: event.target
-                            .value as Phase0PossibleKind,
-                        })
-                      }
-                    >
-                      {possibleKindOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <div className="action-boundary">
+                    <div>
+                      <span>現在可以做</span>
+                      <strong>{selectedDraft.allowedAction}</strong>
+                    </div>
+                    <div>
+                      <span>現在不能做</span>
+                      <strong>{selectedDraft.disallowedAction}</strong>
+                    </div>
+                    <div>
+                      <span>需要確認者</span>
+                      <strong>{selectedDraft.confirmationOwner}</strong>
+                    </div>
+                  </div>
 
-                  <label>
-                    信心程度
-                    <select
-                      value={selectedDraft.confidence}
-                      onChange={(event) =>
-                        updateSelectedDraft({
-                          confidence: event.target.value as Phase0Confidence,
-                        })
-                      }
-                    >
-                      {confidenceOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <div className="draft-editor__grid">
+                    <label>
+                      我現在可以做什麼
+                      <textarea
+                        rows={3}
+                        value={selectedDraft.allowedAction}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            allowedAction: event.target.value,
+                          })
+                        }
+                      />
+                    </label>
 
-                  <label>
-                    下一步
-                    <select
-                      value={selectedDraft.suggestedNextStep}
-                      onChange={(event) =>
-                        updateSelectedDraft({
-                          suggestedNextStep: event.target
-                            .value as Phase0SuggestedNextStep,
-                        })
-                      }
-                    >
-                      {nextStepOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
+                    <label>
+                      我現在不能做什麼
+                      <textarea
+                        rows={3}
+                        value={selectedDraft.disallowedAction}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            disallowedAction: event.target.value,
+                          })
+                        }
+                      />
+                    </label>
 
-                <div className="draft-editor__grid">
-                  <label>
-                    我現在可以做什麼
-                    <textarea
-                      rows={3}
-                      value={selectedDraft.allowedAction}
-                      onChange={(event) =>
-                        updateSelectedDraft({
-                          allowedAction: event.target.value,
-                        })
-                      }
-                    />
-                  </label>
+                    <label>
+                      交給誰確認
+                      <textarea
+                        rows={3}
+                        value={selectedDraft.confirmationOwner}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            confirmationOwner: event.target.value,
+                          })
+                        }
+                      />
+                    </label>
+                  </div>
+                </section>
+
+                <section className="draft-section">
+                  <div className="draft-section__header">
+                    <h4>草稿內容</h4>
+                    <p>
+                      這裡只記錄整理判斷與疑點，不把原始資訊改寫成已確認資料。
+                    </p>
+                  </div>
 
                   <label>
-                    我現在不能做什麼
-                    <textarea
-                      rows={3}
-                      value={selectedDraft.disallowedAction}
+                    草稿標題
+                    <input
+                      placeholder="例如：先記錄原文中的候選需求，不補地址"
+                      value={selectedDraft.draftTitle}
                       onChange={(event) =>
-                        updateSelectedDraft({
-                          disallowedAction: event.target.value,
-                        })
+                        updateSelectedDraft({ draftTitle: event.target.value })
                       }
                     />
                   </label>
 
-                  <label>
-                    交給誰確認
-                    <textarea
-                      rows={3}
-                      value={selectedDraft.confirmationOwner}
-                      onChange={(event) =>
-                        updateSelectedDraft({
-                          confirmationOwner: event.target.value,
-                        })
-                      }
-                    />
-                  </label>
-                </div>
+                  <div className="draft-editor__grid">
+                    <label>
+                      候選類型
+                      <select
+                        value={selectedDraft.possibleKind}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            possibleKind: event.target
+                              .value as Phase0PossibleKind,
+                          })
+                        }
+                      >
+                        {possibleKindOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      信心程度
+                      <select
+                        value={selectedDraft.confidence}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            confidence: event.target.value as Phase0Confidence,
+                          })
+                        }
+                      >
+                        {confidenceOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      下一步
+                      <select
+                        value={selectedDraft.suggestedNextStep}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            suggestedNextStep: event.target
+                              .value as Phase0SuggestedNextStep,
+                          })
+                        }
+                      >
+                        {nextStepOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                </section>
 
                 <label className="draft-editor__toggle">
                   <input
