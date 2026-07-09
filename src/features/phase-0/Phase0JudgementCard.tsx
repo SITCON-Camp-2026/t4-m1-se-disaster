@@ -95,6 +95,26 @@ export function Phase0JudgementCard({
         </p>
       ) : null}
 
+      {editableDraft ? (
+        <section className="judgement-boundary">
+          <h4>行動邊界</h4>
+          <dl>
+            <div>
+              <dt>可以做</dt>
+              <dd>{editableDraft.allowedAction}</dd>
+            </div>
+            <div>
+              <dt>不能做</dt>
+              <dd>{editableDraft.disallowedAction}</dd>
+            </div>
+            <div>
+              <dt>確認者</dt>
+              <dd>{editableDraft.confirmationOwner}</dd>
+            </div>
+          </dl>
+        </section>
+      ) : null}
+
       <section>
         <h4>目前只有安全預設</h4>
         <ul>

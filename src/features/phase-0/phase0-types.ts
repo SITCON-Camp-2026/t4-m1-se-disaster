@@ -45,6 +45,8 @@ export type Phase0InformationCompleteness = "low" | "medium" | "high";
 
 export type Phase0Difficulty = "hard" | "medium" | "easy";
 
+export type Phase0FitAnswer = "yes" | "partial" | "no";
+
 export type Phase0JudgementDraft = {
   messyRecordId: string;
   possibleKind: Phase0PossibleKind;
@@ -59,5 +61,12 @@ export type Phase0JudgementDraft = {
 export type Phase0EditableDraft = Phase0JudgementDraft & {
   draftTitle: string;
   humanCorrection: string;
+  allowedAction: string;
+  disallowedAction: string;
+  confirmationOwner: string;
+  sourceFit: Phase0FitAnswer;
+  timeFit: Phase0FitAnswer;
+  confirmationFit: Phase0FitAnswer;
+  boundaryFit: Phase0FitAnswer;
   needsHumanReview: boolean;
 };

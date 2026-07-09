@@ -31,9 +31,11 @@
 | 2026-07-09 | Phase 0 | 處理可能誤導的候選判斷           | 原本可以讓 agent 自動替 M-001 到 M-012 分類，但這會像標準答案表                                 | 拒絕             | task card 明確要求不要把 M-001 到 M-012 的分析寫死成標準答案；畫面只提供可編輯草稿與保守預設 | `docs/tasks/01-phase-0-messy-sprint.md`                                                    |
 | 2026-07-09 | Phase 0 | 自由優化工作台操作               | 將左側資料佇列加入篩選，右側改成判斷儀表，讓使用者優先處理需確認、不可行動、尚未建立草稿的資料  | 採用             | 這能讓工作台更接近實際整理流程；仍保留未確認資訊不得被說成已確認的安全邊界                   | `src/features/phase-0/Phase0Workbench.tsx`, `src/styles/global.css`                        |
 | 2026-07-09 | Phase 0 | 將部分原始資訊放入工作台         | 讓原始資訊頁顯示已放入工作台數量，並由使用者選擇哪些原始資訊要送進整理工作台                    | 採用             | 工作台不必一次處理全部原始資訊；讓使用者先挑需要整理的資料，能降低畫面雜訊                   | `src/app/App.tsx`, `src/features/phase-0/Phase0RawInfoPanel.tsx`                           |
-| 2026-07-09 | Phase 0 | 加入審查人力分配與優先順序       | 使用 max-min 正規化將資訊風險、完整度與草稿狀態轉成優先分數，再分配可用審查人力                 | 採用             | 這只用於整理與審查工作量建議，不作為現場派工或真實救災決策                                   | `src/features/phase-0/Phase0Workbench.tsx`, `src/styles/global.css`                        |
+| 2026-07-09 | Phase 0 | 加入審查比例與優先順序           | 使用 max-min 正規化將資訊風險、完整度與草稿狀態轉成優先分數，再顯示建議審查比例                 | 採用             | 這只用於整理與審查工作量建議，不作為現場派工或真實救災決策                                   | `src/features/phase-0/Phase0Workbench.tsx`, `src/styles/global.css`                        |
 | 2026-07-09 | Phase 0 | 加深整理工作台資訊剖析           | 在工作台加入分類理由、資訊狀態、完整度線索、缺漏線索、審查問題與人力建議                        | 採用             | 原始資訊頁負責快速掃描，整理工作台應提供更完整的判讀與整理脈絡                               | `src/features/phase-0/Phase0Workbench.tsx`, `tests/app-smoke.test.tsx`                     |
 | 2026-07-09 | Phase 0 | 調整原始資訊難度視覺             | 原始資訊頁移除完整度欄位，改用整理難度與紅黃綠卡片顏色協助快速掃描                              | 採用             | 完整度細節留在整理工作台；原始資訊頁用難度與顏色提供更直覺的入口                             | `src/features/phase-0/Phase0RawInfoPanel.tsx`, `src/styles/global.css`                     |
+| 2026-07-09 | Phase 0 | 改善草稿編輯行動邊界             | 在草稿中加入「可以做」「不能做」「交給誰確認」欄位與摘要，協助使用者辨識自己能採取的整理行動    | 採用             | 避免使用者把未確認資訊直接當成任務；讓草稿先釐清行動邊界與確認責任                           | `src/features/phase-0/Phase0Workbench.tsx`, `src/features/phase-0/Phase0JudgementCard.tsx` |
+| 2026-07-09 | Phase 0 | 加入使用者適配度自評             | 在草稿中加入四個自評問題，依使用者回答計算與這筆資訊整理任務的適配度百分比                      | 採用             | 讓使用者先判斷自己是否適合接手整理與確認；自評結果不代表可以做現場派工或真實救災判斷         | `src/features/phase-0/Phase0Workbench.tsx`, `tests/app-smoke.test.tsx`                     |
 
 ## 範例
 

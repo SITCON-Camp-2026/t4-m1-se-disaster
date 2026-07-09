@@ -434,6 +434,89 @@ textarea {
   line-height: 1.5;
 }
 
+.judgement-boundary dl,
+.action-boundary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.judgement-boundary div,
+.action-boundary div {
+  display: grid;
+  gap: 4px;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.judgement-boundary dt,
+.action-boundary span {
+  color: #5f6b7a;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.judgement-boundary dd,
+.action-boundary strong {
+  margin: 0;
+  color: #17202a;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.fit-check {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.fit-check__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fit-check h4,
+.fit-check p {
+  margin: 0;
+}
+
+.fit-check p {
+  color: #5f6b7a;
+  line-height: 1.45;
+}
+
+.fit-check__header > strong {
+  min-width: 56px;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #245d9d;
+  color: #ffffff;
+  text-align: center;
+}
+
+.fit-check__result {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #eef6ff;
+  color: #245d9d;
+  font-weight: 800;
+}
+
+.fit-question-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .judgement-card__header {
   display: flex;
   justify-content: space-between;
@@ -739,7 +822,10 @@ textarea {
   }
 
   .analysis-grid,
-  .signal-grid {
+  .signal-grid,
+  .judgement-boundary dl,
+  .action-boundary,
+  .fit-question-grid {
     grid-template-columns: 1fr;
   }
 

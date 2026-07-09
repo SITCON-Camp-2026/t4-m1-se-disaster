@@ -80,7 +80,8 @@ describe("App", () => {
     expect(screen.getByText("已看到的線索")).toBeInTheDocument();
     expect(screen.getByText("缺少的線索")).toBeInTheDocument();
     expect(screen.getByText("下一步審查問題")).toBeInTheDocument();
-    expect(screen.getByText("建議審查人力")).toBeInTheDocument();
+    expect(screen.getByText("建議審查比例")).toBeInTheDocument();
+    expect(screen.getAllByText(/\d+%/).length).toBeGreaterThan(0);
   });
 
   it("shows review staffing allocation in the workbench", () => {
@@ -106,11 +107,36 @@ describe("App", () => {
 
     expect(screen.getByText("判斷儀表")).toBeInTheDocument();
     expect(screen.getByText("草稿")).toBeInTheDocument();
+    expect(screen.getByText("確認我能做什麼")).toBeInTheDocument();
+    expect(screen.getByLabelText("我現在可以做什麼")).toBeInTheDocument();
+    expect(screen.getByLabelText("我現在不能做什麼")).toBeInTheDocument();
+    expect(screen.getByLabelText("交給誰確認")).toBeInTheDocument();
+    expect(screen.getByText("我和這筆整理任務的適配度")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("我看得懂這筆資訊的來源與限制嗎？"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("我有時間補齊或追蹤缺漏資訊嗎？"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("我知道這筆資訊應該交給誰確認嗎？"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("我能只做整理，不直接派工或判定真實嗎？"),
+    ).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("草稿標題"), {
       target: { value: "先確認時間與來源" },
     });
     expect(screen.getByText("先確認時間與來源")).toBeInTheDocument();
+
+    fireEvent.change(
+      screen.getByLabelText("我看得懂這筆資訊的來源與限制嗎？"),
+      {
+        target: { value: "yes" },
+      },
+    );
+    expect(screen.getByText("75%")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "刪除草稿" }));
     expect(screen.getByText("這筆尚未建立草稿")).toBeInTheDocument();

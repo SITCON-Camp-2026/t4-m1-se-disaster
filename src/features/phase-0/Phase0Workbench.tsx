@@ -11,6 +11,7 @@ import {
 import type {
   Phase0Confidence,
   Phase0EditableDraft,
+  Phase0FitAnswer,
   Phase0MessyRecord,
   Phase0PossibleKind,
   Phase0SuggestedNextStep,
@@ -55,6 +56,12 @@ const nextStepOptions: Array<{
   { value: "do_not_use_yet", label: "暫時不要使用" },
 ];
 
+const fitAnswerOptions: Array<{ value: Phase0FitAnswer; label: string }> = [
+  { value: "yes", label: "符合" },
+  { value: "partial", label: "部分符合" },
+  { value: "no", label: "不符合" },
+];
+
 type ReviewAllocation = {
   record: Phase0MessyRecord;
   priority: number;
@@ -70,6 +77,49 @@ function maxMinNormalize(values: number[]) {
   if (max === min) return values.map(() => 1);
 
   return values.map((value) => (value - min) / (max - min));
+}
+
+function formatAllocationShare(assignedPeople: number, reviewerCount: number) {
+  if (reviewerCount <= 0) return "0%";
+
+  return `${Math.round((assignedPeople / reviewerCount) * 100)}%`;
+}
+
+function scoreFitAnswer(answer: Phase0FitAnswer) {
+  if (answer === "yes") return 2;
+  if (answer === "partial") return 1;
+  return 0;
+}
+
+function calculateFit(draft: Phase0EditableDraft) {
+  const score =
+    scoreFitAnswer(draft.sourceFit) +
+    scoreFitAnswer(draft.timeFit) +
+    scoreFitAnswer(draft.confirmationFit) +
+    scoreFitAnswer(draft.boundaryFit);
+  const percentage = Math.round((score / 8) * 100);
+
+  if (percentage >= 75) {
+    return {
+      percentage,
+      label: "適配度高",
+      note: "適合接手整理與確認，但仍不可直接當成救災行動。",
+    };
+  }
+
+  if (percentage >= 40) {
+    return {
+      percentage,
+      label: "適配度中",
+      note: "可以先整理一部分，並把不確定處交給更合適的人確認。",
+    };
+  }
+
+  return {
+    percentage,
+    label: "適配度低",
+    note: "建議先轉交或請人協助，不要獨自推進這筆資訊。",
+  };
 }
 
 function buildReviewAllocations({
@@ -179,6 +229,14 @@ function createBlankDraft(record: Phase0MessyRecord): Phase0EditableDraft {
     draftTitle: "",
     humanCorrection: "",
     humanReviewNote: "",
+    allowedAction: "保留原文、標記疑點、補齊需要確認的問題。",
+    disallowedAction:
+      "不要直接派工、發布為已確認事實，或補上原文沒有的地址與聯絡資訊。",
+    confirmationOwner: "待指定人工確認者",
+    sourceFit: "partial",
+    timeFit: "partial",
+    confirmationFit: "partial",
+    boundaryFit: "yes",
     needsHumanReview: record.verificationStatus !== "verified",
   };
 }
@@ -445,8 +503,13 @@ export function Phase0Workbench({
                 <small>{selectedCompleteness.reason}</small>
               </div>
               <div>
-                <span>建議審查人力</span>
-                <strong>{selectedAllocation?.assignedPeople ?? 0} 人</strong>
+                <span>建議審查比例</span>
+                <strong>
+                  {formatAllocationShare(
+                    selectedAllocation?.assignedPeople ?? 0,
+                    reviewerCount,
+                  )}
+                </strong>
                 <small>依目前 max-min 優先分數分配，不代表現場派工。</small>
               </div>
             </div>
@@ -490,7 +553,7 @@ export function Phase0Workbench({
             <div className="draft-editor__header">
               <div>
                 <p className="eyebrow">可編輯整理草稿</p>
-                <h3>{selectedDraft ? "編輯草稿" : "這筆尚未建立草稿"}</h3>
+                <h3>{selectedDraft ? "確認我能做什麼" : "這筆尚未建立草稿"}</h3>
               </div>
               <div className="draft-editor__actions">
                 <button
@@ -511,6 +574,108 @@ export function Phase0Workbench({
 
             {selectedDraft ? (
               <>
+                <section className="action-boundary">
+                  <div>
+                    <span>現在可以做</span>
+                    <strong>{selectedDraft.allowedAction}</strong>
+                  </div>
+                  <div>
+                    <span>現在不能做</span>
+                    <strong>{selectedDraft.disallowedAction}</strong>
+                  </div>
+                  <div>
+                    <span>需要確認者</span>
+                    <strong>{selectedDraft.confirmationOwner}</strong>
+                  </div>
+                </section>
+
+                <section className="fit-check">
+                  <div className="fit-check__header">
+                    <div>
+                      <h4>我和這筆整理任務的適配度</h4>
+                      <p>{calculateFit(selectedDraft).note}</p>
+                    </div>
+                    <strong>{calculateFit(selectedDraft).percentage}%</strong>
+                  </div>
+                  <div className="fit-check__result">
+                    {calculateFit(selectedDraft).label}
+                  </div>
+                  <div className="fit-question-grid">
+                    <label>
+                      我看得懂這筆資訊的來源與限制嗎？
+                      <select
+                        value={selectedDraft.sourceFit}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            sourceFit: event.target.value as Phase0FitAnswer,
+                          })
+                        }
+                      >
+                        {fitAnswerOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      我有時間補齊或追蹤缺漏資訊嗎？
+                      <select
+                        value={selectedDraft.timeFit}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            timeFit: event.target.value as Phase0FitAnswer,
+                          })
+                        }
+                      >
+                        {fitAnswerOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      我知道這筆資訊應該交給誰確認嗎？
+                      <select
+                        value={selectedDraft.confirmationFit}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            confirmationFit: event.target
+                              .value as Phase0FitAnswer,
+                          })
+                        }
+                      >
+                        {fitAnswerOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label>
+                      我能只做整理，不直接派工或判定真實嗎？
+                      <select
+                        value={selectedDraft.boundaryFit}
+                        onChange={(event) =>
+                          updateSelectedDraft({
+                            boundaryFit: event.target.value as Phase0FitAnswer,
+                          })
+                        }
+                      >
+                        {fitAnswerOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                </section>
+
                 <label>
                   草稿標題
                   <input
@@ -577,6 +742,47 @@ export function Phase0Workbench({
                         </option>
                       ))}
                     </select>
+                  </label>
+                </div>
+
+                <div className="draft-editor__grid">
+                  <label>
+                    我現在可以做什麼
+                    <textarea
+                      rows={3}
+                      value={selectedDraft.allowedAction}
+                      onChange={(event) =>
+                        updateSelectedDraft({
+                          allowedAction: event.target.value,
+                        })
+                      }
+                    />
+                  </label>
+
+                  <label>
+                    我現在不能做什麼
+                    <textarea
+                      rows={3}
+                      value={selectedDraft.disallowedAction}
+                      onChange={(event) =>
+                        updateSelectedDraft({
+                          disallowedAction: event.target.value,
+                        })
+                      }
+                    />
+                  </label>
+
+                  <label>
+                    交給誰確認
+                    <textarea
+                      rows={3}
+                      value={selectedDraft.confirmationOwner}
+                      onChange={(event) =>
+                        updateSelectedDraft({
+                          confirmationOwner: event.target.value,
+                        })
+                      }
+                    />
                   </label>
                 </div>
 
@@ -736,7 +942,12 @@ export function Phase0Workbench({
                     <b>{allocation.priority}</b>
                   </span>
                   <small>{allocation.reason}</small>
-                  <em>{allocation.assignedPeople} 人</em>
+                  <em>
+                    {formatAllocationShare(
+                      allocation.assignedPeople,
+                      reviewerCount,
+                    )}
+                  </em>
                 </button>
               ))}
             </div>
