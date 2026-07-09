@@ -1071,18 +1071,25 @@ textarea {
 }
 
 .v1-evidence-grid div {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.25rem, 1fr));
   gap: 6px;
 }
 
 .v1-evidence-grid span {
-  border-radius: 999px;
-  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border-radius: 8px;
+  padding: 6px 10px;
   background: #eef6ff;
   color: #245d9d;
   font-size: 0.82rem;
   font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .v1-evidence-grid ul {
